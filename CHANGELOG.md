@@ -3,6 +3,8 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+### Added
+- `cohorts` command for month-by-month customer retention by first-order cohort
 
 ## [0.1.0] - 2026-10-31
 ### Added

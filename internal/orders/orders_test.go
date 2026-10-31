@@ -105,6 +105,43 @@ func TestCustomerMatchingIgnoresCaseAndSpaces(t *testing.T) {
 	}
 }
 
+
+func TestCohortsWorkedByHand(t *testing.T) {
+	orders := []Order{
+		{Date: date("2026-01-02"), Customer: "a@example.com", Cents: 1000},
+		{Date: date("2026-01-20"), Customer: " A@example.com ", Cents: 500},
+		{Date: date("2026-02-03"), Customer: "a@example.com", Cents: 1000},
+		{Date: date("2026-03-04"), Customer: "a@example.com", Cents: 1000},
+		{Date: date("2026-01-05"), Customer: "b@example.com", Cents: 1000},
+		{Date: date("2026-03-06"), Customer: "b@example.com", Cents: 1000},
+		{Date: date("2026-02-10"), Customer: "c@example.com", Cents: 1000},
+		{Date: date("2026-04-01"), Customer: "c@example.com", Cents: 1000},
+		{Date: date("2026-03-12"), Customer: "d@example.com", Cents: 1000},
+		{Date: date("2026-03-15"), Customer: "d@example.com", Cents: -200},
+	}
+	got, err := Cohorts(orders, date("2026-03-31"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []Cohort{
+		{FirstOrderMonth: "2026-01", Customers: 2, Retention: []float64{100, 50, 100}},
+		{FirstOrderMonth: "2026-02", Customers: 1, Retention: []float64{100, 0}},
+		{FirstOrderMonth: "2026-03", Customers: 1, Retention: []float64{100}},
+	}
+	if fmt.Sprint(got.Cohorts) != fmt.Sprint(want) {
+		t.Fatalf("got %+v, want %+v", got.Cohorts, want)
+	}
+	if got.AsOf != "2026-03-31" {
+		t.Fatalf("AsOf = %s", got.AsOf)
+	}
+}
+
+func TestCohortsRejectNoPositiveOrders(t *testing.T) {
+	if _, err := Cohorts([]Order{{Date: date("2026-01-01"), Customer: "a", Cents: -1}}, date("2026-01-31")); err == nil {
+		t.Fatal("expected an error for data with no positive orders")
+	}
+}
+
 func TestSummary(t *testing.T) {
 	var orders []Order
 	orders = append(orders, every("big", 30, 5, 10, 10000)...)

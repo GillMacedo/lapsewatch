@@ -39,6 +39,8 @@ Or build the binary with Go 1.27 or newer:
 
 ## Usage
 
+`lapsewatch cohorts orders.csv` prints monthly retention by first-order cohort. With `--as-of 2026-12-31`, it reports through that month; `--json` returns the same table as structured data. `M0` is the first-order month, and `M1`, `M2`, etc. are later calendar months. A cell is the percentage of customers in the original cohort with at least one positive order in that month; `—` marks months that have not elapsed yet. Same-day rows and refunds do not create extra returning customers.
+
 Without installing anything, run `npx lapsewatch check orders.csv`. This example uses the made-up file in `examples/`:
 
     $ go run . check examples/orders.csv
