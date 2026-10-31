@@ -40,6 +40,29 @@ func TestOptionsCanFollowThePath(t *testing.T) {
 	}
 }
 
+
+func TestCohortsPrintHandWorkedRetention(t *testing.T) {
+	file := writeCSV(t, "Date,Email,Total\n2026-01-02,a@example.com,10\n2026-02-03,a@example.com,10\n2026-01-05,b@example.com,10\n2026-03-06,b@example.com,10\n")
+	var out, errs bytes.Buffer
+	if code := run([]string{"cohorts", file, "--as-of", "2026-03-31"}, &out, &errs); code != 0 {
+		t.Fatalf("exit %d: %s", code, errs.String())
+	}
+	for _, want := range []string{"First order month", "2026-01", "M2", "50.0%", "100.0%"} {
+		if !strings.Contains(out.String(), want) {
+			t.Errorf("missing %q in:\n%s", want, out.String())
+		}
+	}
+}
+
+func writeCSV(t *testing.T, contents string) string {
+	t.Helper()
+	path := t.TempDir() + "/orders.csv"
+	if err := os.WriteFile(path, []byte(contents), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	return path
+}
+
 func TestErrorsExitTwo(t *testing.T) {
 	var out, errs bytes.Buffer
 	for _, args := range [][]string{{"check"}, {"check", "/no/such.csv"}, {"nope"}, {}, {"check", sample, "--as-of", "soon"}, {"check", sample, "--columns", "oops"}, {"check", sample, "--date-format", "x"}, {"check", sample, "--top", "-1"}} {

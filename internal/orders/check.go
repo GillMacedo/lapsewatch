@@ -74,6 +74,102 @@ func median(values []float64) float64 {
 	return (sorted[middle-1] + sorted[middle]) / 2
 }
 
+
+type Cohort struct {
+	FirstOrderMonth string    `json:"first_order_month"`
+	Customers       int       `json:"customers"`
+	Retention       []float64 `json:"retention_percent"`
+}
+
+type CohortResult struct {
+	AsOf    string   `json:"as_of"`
+	Cohorts []Cohort `json:"cohorts"`
+}
+
+type cohortHistory struct {
+	first time.Time
+	months map[int]struct{}
+}
+
+type cohortGroup struct {
+	customers int
+	activeByMonth map[int]int
+}
+
+func monthNumber(day time.Time) int {
+	return day.Year()*12 + int(day.Month()) - 1
+}
+
+// Cohorts groups customers by the month of their first positive order.
+// Retention at age N is the share of the cohort with a positive order in the
+// Nth calendar month after acquisition; age zero is 100% by definition.
+func Cohorts(orders []Order, asOf time.Time) (CohortResult, error) {
+	if asOf.IsZero() {
+		for _, order := range orders {
+			if order.Date.After(asOf) {
+				asOf = order.Date
+			}
+		}
+	}
+	if asOf.IsZero() {
+		return CohortResult{}, fmt.Errorf("the file has no readable orders")
+	}
+	cutoffMonth := monthNumber(asOf)
+	people := map[string]*cohortHistory{}
+	for _, order := range orders {
+		if order.Date.After(asOf) || order.Cents <= 0 {
+			continue
+		}
+		key := CustomerKey(order.Customer)
+		person := people[key]
+		if person == nil {
+			person = &cohortHistory{first: order.Date, months: map[int]struct{}{}}
+			people[key] = person
+		}
+		if order.Date.Before(person.first) {
+			person.first = order.Date
+		}
+		person.months[monthNumber(order.Date)] = struct{}{}
+	}
+	if len(people) == 0 {
+		return CohortResult{}, fmt.Errorf("the file has no readable orders")
+	}
+	groups := map[int]*cohortGroup{}
+	for _, person := range people {
+		firstMonth := monthNumber(person.first)
+		group := groups[firstMonth]
+		if group == nil {
+			group = &cohortGroup{activeByMonth: map[int]int{}}
+			groups[firstMonth] = group
+		}
+		group.customers++
+		for month := range person.months {
+			if month >= firstMonth && month <= cutoffMonth {
+				group.activeByMonth[month-firstMonth]++
+			}
+		}
+	}
+	firstMonths := make([]int, 0, len(groups))
+	for month := range groups {
+		firstMonths = append(firstMonths, month)
+	}
+	sort.Ints(firstMonths)
+	result := CohortResult{AsOf: asOf.Format("2006-01-02"), Cohorts: make([]Cohort, 0, len(firstMonths))}
+	for _, firstMonth := range firstMonths {
+		group := groups[firstMonth]
+		retention := make([]float64, cutoffMonth-firstMonth+1)
+		for age := range retention {
+			retention[age] = math.Round(float64(group.activeByMonth[age])*1000/float64(group.customers)) / 10
+		}
+		result.Cohorts = append(result.Cohorts, Cohort{
+			FirstOrderMonth: time.Date(firstMonth/12, time.Month(firstMonth%12+1), 1, 0, 0, 0, 0, time.UTC).Format("2006-01"),
+			Customers: group.customers,
+			Retention: retention,
+		})
+	}
+	return result, nil
+}
+
 // Check sorts customers by how they're buying compared with their own pattern.
 // A customer who usually orders every 30 days is at risk after 60 days, and one
 // who orders every 90 days isn't, so one fixed cut-off wouldn't work.
