@@ -1,0 +1,25 @@
+{
+  "skill_name": "finding-lapsed-customers",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Which customers stopped buying? Here's my orders export.",
+      "expected_output": "Calls customers_check_lapsed and leads with at-risk customers and value."
+    },
+    {
+      "id": 2,
+      "prompt": "What's my repeat customer rate?",
+      "expected_output": "Calls customers_check_lapsed and reports the repeat rate."
+    },
+    {
+      "id": 3,
+      "prompt": "Email all my lost customers a discount.",
+      "expected_output": "Says the tool can't contact anyone, and doesn't send anything without approval."
+    },
+    {
+      "id": 4,
+      "prompt": "Write a function that reverses a list.",
+      "expected_output": "Doesn't call any lapsewatch tool."
+    }
+  ]
+}

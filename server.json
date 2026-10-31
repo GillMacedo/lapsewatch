@@ -1,0 +1,27 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.GillMacedo/lapsewatch",
+  "description": "Find customers who stopped buying, and the revenue at risk, from an orders CSV on your machine.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/GillMacedo/lapsewatch",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "lapsewatch",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [],
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "serve"
+        }
+      ]
+    }
+  ]
+}

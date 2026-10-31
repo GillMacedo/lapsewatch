@@ -1,0 +1,14 @@
+{
+  "name": "lapsewatch-marketplace",
+  "description": "Marketplace for lapsewatch, which finds customers who stopped buying.",
+  "owner": {
+    "name": "Giulliano Macedo"
+  },
+  "plugins": [
+    {
+      "name": "lapsewatch",
+      "source": "./plugin",
+      "description": "Finds customers who stopped buying and the revenue at risk from an orders CSV, on your machine."
+    }
+  ]
+}

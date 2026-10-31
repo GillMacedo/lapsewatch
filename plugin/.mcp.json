@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "lapsewatch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "lapsewatch@0.1.0",
+        "serve"
+      ]
+    }
+  }
+}

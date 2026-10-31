@@ -1,0 +1,19 @@
+{
+  "name": "lapsewatch",
+  "version": "0.1.0",
+  "description": "Finds customers who stopped buying and the revenue at risk from an orders CSV, on your machine.",
+  "author": {
+    "name": "Giulliano Macedo",
+    "url": "https://github.com/GillMacedo"
+  },
+  "homepage": "https://github.com/GillMacedo/lapsewatch",
+  "repository": "https://github.com/GillMacedo/lapsewatch",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "customer-retention",
+    "churn",
+    "sales",
+    "csv"
+  ]
+}

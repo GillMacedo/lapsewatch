@@ -1,0 +1,6 @@
+.env
+.env.*
+.DS_Store
+/lapsewatch
+/dist/
+/npm/bin/
