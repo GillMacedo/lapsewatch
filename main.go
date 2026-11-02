@@ -153,7 +153,6 @@ func cohorts(args []string, stdout io.Writer) error {
 	return writer.Flush()
 }
 
-
 func check(args []string, stdout io.Writer) error {
 	flags := flag.NewFlagSet("check", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
