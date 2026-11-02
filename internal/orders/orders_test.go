@@ -105,7 +105,6 @@ func TestCustomerMatchingIgnoresCaseAndSpaces(t *testing.T) {
 	}
 }
 
-
 func TestCohortsWorkedByHand(t *testing.T) {
 	orders := []Order{
 		{Date: date("2026-01-02"), Customer: "a@example.com", Cents: 1000},
