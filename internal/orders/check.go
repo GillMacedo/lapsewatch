@@ -74,7 +74,6 @@ func median(values []float64) float64 {
 	return (sorted[middle-1] + sorted[middle]) / 2
 }
 
-
 type Cohort struct {
 	FirstOrderMonth string    `json:"first_order_month"`
 	Customers       int       `json:"customers"`
@@ -87,12 +86,12 @@ type CohortResult struct {
 }
 
 type cohortHistory struct {
-	first time.Time
+	first  time.Time
 	months map[int]struct{}
 }
 
 type cohortGroup struct {
-	customers int
+	customers     int
 	activeByMonth map[int]int
 }
 
@@ -132,7 +131,7 @@ func Cohorts(orders []Order, asOf time.Time) (CohortResult, error) {
 		person.months[monthNumber(order.Date)] = struct{}{}
 	}
 	if len(people) == 0 {
-		return CohortResult{}, fmt.Errorf("the file has no readable orders")
+		return CohortResult{}, fmt.Errorf("no positive orders on or before %s", asOf.Format("2006-01-02"))
 	}
 	groups := map[int]*cohortGroup{}
 	for _, person := range people {
