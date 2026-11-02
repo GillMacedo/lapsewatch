@@ -53,7 +53,7 @@ func TestCohortsPrintHandWorkedRetention(t *testing.T) {
 	}
 }
 func TestCohortsReportsCutoffBeforeFirstOrder(t *testing.T) {
-	file := writeCSV(t, "Date,Email,Total\\n2026-01-02,a@example.com,10\\n")
+	file := writeCSV(t, "Date,Email,Total\n2026-01-02,a@example.com,10\n")
 	var out, errs bytes.Buffer
 	if code := run([]string{"cohorts", file, "--as-of", "2000-01-01"}, &out, &errs); code != 2 {
 		t.Fatalf("exit %d, want 2: %s", code, errs.String())
