@@ -40,7 +40,6 @@ func TestOptionsCanFollowThePath(t *testing.T) {
 	}
 }
 
-
 func TestCohortsPrintHandWorkedRetention(t *testing.T) {
 	file := writeCSV(t, "Date,Email,Total\n2026-01-02,a@example.com,10\n2026-02-03,a@example.com,10\n2026-01-05,b@example.com,10\n2026-03-06,b@example.com,10\n")
 	var out, errs bytes.Buffer
@@ -51,6 +50,16 @@ func TestCohortsPrintHandWorkedRetention(t *testing.T) {
 		if !strings.Contains(out.String(), want) {
 			t.Errorf("missing %q in:\n%s", want, out.String())
 		}
+	}
+}
+func TestCohortsReportsCutoffBeforeFirstOrder(t *testing.T) {
+	file := writeCSV(t, "Date,Email,Total\\n2026-01-02,a@example.com,10\\n")
+	var out, errs bytes.Buffer
+	if code := run([]string{"cohorts", file, "--as-of", "2000-01-01"}, &out, &errs); code != 2 {
+		t.Fatalf("exit %d, want 2: %s", code, errs.String())
+	}
+	if !strings.Contains(errs.String(), "no positive orders on or before 2000-01-01") {
+		t.Fatalf("unexpected error: %s", errs.String())
 	}
 }
 
