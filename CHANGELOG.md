@@ -3,6 +3,9 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+### Added
+- `cohorts` command for month-by-month customer retention by first-order cohort
+
 ### Changed
 - Contributing guide and PR template state the PR rules
 
